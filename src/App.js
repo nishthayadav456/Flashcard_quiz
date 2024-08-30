@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useState } from 'react';
+import { FlashcardForm } from './Components/FlashcardForm';
+import { FlashcardList } from './Components/FlashcardList';
+import { Quiz } from './Components/Quiz';
+import { ProgressTracker } from './Components/ProgressTracker';
 
 function App() {
+  const [flashcards, setFlashcards] = useState([]);
+  const [isQuizMode, setIsQuizMode] = useState(false);
+  const [score, setScore] = useState(0);
+  const addFlashcard = (flashcard) => {
+    setFlashcards([...flashcards, flashcard]);
+  };
+
+  const startQuiz = () => {
+    setIsQuizMode(true);
+  };
+
+  const handleQuizComplete = (finalScore) => {
+    setScore(finalScore);
+    setIsQuizMode(false);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="max-w-md mx-auto p-4">
+      <h1 className="text-2xl font-bold text-center mb-4">Flashcard Quiz App</h1>
+
+      {isQuizMode ? (
+        <Quiz flashcards={flashcards} onQuizComplete={handleQuizComplete} />
+      ) : (
+        <>
+          <FlashcardForm addFlashcard={addFlashcard} />
+          <FlashcardList flashcards={flashcards} />
+          <button onClick={startQuiz} className="bg-blue-500 text-white p-2 mt-4">
+            Start Quiz
+          </button>
+          {score !== 0 && (
+            <ProgressTracker total={flashcards.length} correct={score} />
+          )}
+        </>
+      )}
     </div>
-  );
+  )
 }
 
 export default App;
